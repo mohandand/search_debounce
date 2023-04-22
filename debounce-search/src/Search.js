@@ -3,6 +3,18 @@ import React, {useState} from 'react';
 export default function Search() {
     const[result, setResult] = useState([])
 
+    function debounce(fn,delay){
+        let timeout;
+        return function(...args){
+            const context = this;
+            if(timeout) clearTimeout(timeout)
+            timeout = setTimeout(() => {
+                timeout=null;
+                fn.apply(context,args);
+            },500)
+        }
+    }
+
     function doSearch(event){
         const {value} = event.target;
         fetch(`https://demo.dataverse.org/api/search?q=${value}`)
@@ -23,7 +35,9 @@ export default function Search() {
             <button>Search</button>
             <div>
                 {result.map((item,i)=> {
-                    return <div key={i}>{item[0][0].name}</div>
+                    if(item[0][0] !== undefined){
+                        return <div key={i}>{item[0][0].name}</div>
+                    }
                 })}
             </div>
         </div>
